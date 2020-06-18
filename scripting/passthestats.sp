@@ -2,13 +2,14 @@
 #include <sdktools>
 #include <tf2_stocks>
 
-#define PLUGIN_VERSION		"1.0.0"
+#define PLUGIN_VERSION		"1.1.0"
+#define NAME_SIZE 25
 public Plugin myinfo = {
 	name = "[TF2] Pass the Stats",
 	author = "easye",
 	description = "Stats for Competitve 4v4 Passtime",
 	version = "PLUGIN_VERSION",
-	url=""
+	url="https://github.com/eaasye/passtime"
 }
 
 
@@ -18,7 +19,7 @@ ConVar statsEnable;
 
 
 public void OnPluginStart() {
-	statsEnable = CreateConVar("sm_passthestats_enabled", "1", "Enables passtime stats")
+	statsEnable = CreateConVar("sm_passtime_stats", "1", "Enables passtime stats")
 	CreateConVar("sm_passthestats_version", PLUGIN_VERSION, "*DONT MANUALLY CHANGE* PassTheStats Plugin Version", FCVAR_NOTIFY | FCVAR_DONTRECORD | FCVAR_SPONLY);
 	
 	char mapName[64], prefix[16];
@@ -33,13 +34,17 @@ public void OnPluginStart() {
 	HookEvent("pass_ball_stolen", Event_PassStolen, EventHookMode_Post);
 }
 
+public void OnClientDisconnect(int client) {
+	playerArray[client][0] = 0, playerArray[client][1] = 0, playerArray[client][2] = 0; 
+}
+
 
 public Action Event_PassScore(Event event, const char[] name, bool dontbroadcast) {
 	if (!statsEnable.BoolValue) return Plugin_Handled;
 
 	int client = event.GetInt("scorer")
 	if (!IsValidClient(client)) return Plugin_Handled;
-	char playerName[64];
+	char playerName[NAME_SIZE];
 	GetClientName(client, playerName, sizeof(playerName));
 	PrintToChatAll("\x0700ffff[PASS] %s\x073BC43B scored a goal!", playerName);
 	playerArray[client][0]++;
@@ -54,9 +59,9 @@ public Action Event_PassCaught(Event event, const char[] name, bool dontBroadcas
 	if (TF2_GetClientTeam(passer) == TF2_GetClientTeam(catcher)) return Plugin_Handled;
 	if (TF2_GetClientTeam(passer) == TFTeam_Spectator || TF2_GetClientTeam(catcher) == TFTeam_Spectator) return Plugin_Handled;
 
-	char passerName[64], catcherName[64];
-	GetClientName(passer, passerName, 64);
-	GetClientName(catcher, catcherName, 64);
+	char passerName[NAME_SIZE], catcherName[NAME_SIZE];
+	GetClientName(passer, passerName, sizeof(passerName));
+	GetClientName(catcher, catcherName, sizeof(catcherName));
 	PrintToChatAll("\x0700ffff[PASS] %s \x07ff00ffintercepted \x0700ffff%s!", catcherName, passerName);
 	playerArray[catcher][1]++;
 
@@ -68,9 +73,9 @@ public Action Event_PassStolen(Event event, const char[] name, bool dontBroadcas
 
 	int thief = event.GetInt("attacker");
 	int victim = event.GetInt("victim");
-	char thiefName[64], victimName[64];
-	GetClientName(thief, thiefName, 64);
-	GetClientName(victim, victimName, 64);
+	char thiefName[NAME_SIZE], victimName[NAME_SIZE];
+	GetClientName(thief, thiefName, sizeof(thiefName));
+	GetClientName(victim, victimName, sizeof(victimName));
 	PrintToChatAll("\x0700ffff[PASS] %s\x07ff8000 stole from\x0700ffff %s!", thiefName, victimName);
 	playerArray[thief][2]++;
 
@@ -105,13 +110,13 @@ public void displayStats() {
 		
 		if (TF2_GetClientTeam(x) == TFTeam_Red) {
 			for (int i=0; i < bluCursor; i++) {
-				char playerName[64];
+				char playerName[NAME_SIZE];
 				GetClientName(bluTeam[i], playerName, sizeof(playerName))
 				PrintToChat(x, "\x0700ffff[PASS]\x074EA6C1 %s:\x073BC43B goals %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[bluTeam[i]][0], playerArray[bluTeam[i]][1], playerArray[bluTeam[i]][2])
 			}
 
 			for (int i=0; i < redCursor; i++) {
-				char playerName[64];
+				char playerName[NAME_SIZE];
 				GetClientName(redTeam[i], playerName, sizeof(playerName))
 				PrintToChat(x, "\x0700ffff[PASS]\x07C43F3B %s:\x073BC43B goals %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[redTeam[i]][0], playerArray[redTeam[i]][1], playerArray[redTeam[i]][2])
 			}
@@ -119,18 +124,23 @@ public void displayStats() {
 
 		else if (TF2_GetClientTeam(x) == TFTeam_Blue|| TF2_GetClientTeam(x) == TFTeam_Spectator) {
 			for (int i=0; i < redCursor; i++) {
-                                 char playerName[64];
+                                 char playerName[NAME_SIZE];
                                  GetClientName(redTeam[i], playerName, sizeof(playerName))
                                  PrintToChat(x, "\x0700ffff[PASS]\x07C43F3B %s:\x073BC43B goals %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[redTeam[i]][0], playerArray[redTeam[i]][1], playerArray[redTeam[i]][2])
                          }
 
 			for (int i=0; i < bluCursor; i++) {
-				char playerName[64];
+				char playerName[NAME_SIZE];
 				GetClientName(bluTeam[i], playerName, sizeof(playerName))
 				PrintToChat(x, "\x0700ffff[PASS]\x074EA6C1 %s:\x073BC43B goals %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[bluTeam[i]][0], playerArray[bluTeam[i]][1], playerArray[bluTeam[i]][2])
 			}
 
 		}
+	}
+	
+	//clear stats
+	for (int i=0; i < MaxClients+1;i++) {
+		playerArray[i][0] = 0, playerArray[i][1] = 0, playerArray[i][2] = 0;
 	}
 
 }
