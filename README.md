@@ -9,6 +9,8 @@ Feel free to use anything in this repository for your own pugs
     
 - passtimestats
 
-    Prints chat messages upon a player scoring, intercepting, or stealing...
+    Prints chat messages upon a player scoring, intercepting, or stealing
+    
     Prints players total scores, intercepts, and steals to chat after a game is over via sm_passtime_stats 1/0 (def. 0)
+    
     sm_passtime_stats will be automatically set to 1 if the map name begins with "pa"
