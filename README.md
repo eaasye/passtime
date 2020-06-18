@@ -4,10 +4,11 @@ Feel free to use anything in this repository for your own pugs
 ## plugin features
 - passtimecontrol.smx
 
-    Disables shotgun, stickies, and needles via sm_passtime_whitelist 1/0 (def. 0)
-    Disables the blurry screenoverlay after intercepting or stealing via sm_passtime_hud 1/0 (def. 1)
+        Disables shotgun, stickies, and needles via sm_passtime_whitelist 1/0 (def. 0)
+        Disables the blurry screenoverlay after intercepting or stealing via sm_passtime_hud 1/0 (def. 1)
     
 - passtimestats
-    Prints chat messages upon a player scoring, intercepting, or stealing...
-    Prints each players total scores, intercepts, and steals to chat after a game is over via sm_passtime_stats 1/0 (def. 0)
-    sm_passtime_stats will be automatically set to 1 if the map name begins with "pa"
+
+        Prints chat messages upon a player scoring, intercepting, or stealing...
+        Prints players total scores, intercepts, and steals to chat after a game is over via sm_passtime_stats 1/0 (def. 0)
+        sm_passtime_stats will be automatically set to 1 if the map name begins with "pa"
