@@ -7,6 +7,8 @@ Feel free to use anything in this repository for your own pugs
 
     Disables shotgun, stickies, and needles via sm_passtime_whitelist 1/0 (def. 0)
     
+    Prevents switches classes while dead to instantly respawn via sm_passtime_whitelist 1/0 (def. 0)
+    
     Disables the blurry screenoverlay after intercepting or stealing via sm_passtime_hud 1/0 (def. 1)
     
 - passtimestats
