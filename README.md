@@ -18,3 +18,14 @@ Feel free to use anything in this repository for your own pugs
     Prints players total scores, intercepts, and steals to chat after a game is over via sm_passtime_stats 1/0 (def. 0)
     
     sm_passtime_stats will be automatically set to 1 if the map name begins with "pa"
+## config files
+- pass_push.cfg
+    
+    Enables the passtime config
+  
+- pass_off.cfg
+       
+    Disables the passtime config
+    
+- passtime_whitelist.txt
+    The 4v4 competitive passtime whitelist
