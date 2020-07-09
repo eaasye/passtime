@@ -2,8 +2,9 @@
 #include <sdktools>
 #include <tf2_stocks>
 
-#define PLUGIN_VERSION		"1.1.0"
+#define PLUGIN_VERSION		"1.2.0"
 #define NAME_SIZE 25
+
 public Plugin myinfo = {
 	name = "[TF2] Pass the Stats",
 	author = "easye",
@@ -13,15 +14,14 @@ public Plugin myinfo = {
 }
 
 
-//playerArray: 0 = scores, 1 = interceptions, 2 = steals
-int playerArray[MAXPLAYERS][3];
+//playerArray: 0 = scores, saves = 1, 2 = interceptions, 3 = steals
+int playerArray[MAXPLAYERS][4];
 ConVar statsEnable;
 
 
 public void OnPluginStart() {
 	statsEnable = CreateConVar("sm_passtime_stats", "1", "Enables passtime stats")
 	CreateConVar("sm_passthestats_version", PLUGIN_VERSION, "*DONT MANUALLY CHANGE* PassTheStats Plugin Version", FCVAR_NOTIFY | FCVAR_DONTRECORD | FCVAR_SPONLY);
-	
 	char mapName[64], prefix[16];
         GetCurrentMap(mapName, sizeof(mapName));
 	prefix[0] = mapName[0], prefix[1] = mapName[1];
@@ -62,8 +62,12 @@ public Action Event_PassCaught(Event event, const char[] name, bool dontBroadcas
 	char passerName[NAME_SIZE], catcherName[NAME_SIZE];
 	GetClientName(passer, passerName, sizeof(passerName));
 	GetClientName(catcher, catcherName, sizeof(catcherName));
+	if (InGoalieZone(catcher)) {
+		PrintToChatAll("\x0700ffff[PASS] %s \x07ffff00 saved \x0700ffff%s!", catcherName, passerName);
+		playerArray[catcher][1]++;
+	}
 	PrintToChatAll("\x0700ffff[PASS] %s \x07ff00ffintercepted \x0700ffff%s!", catcherName, passerName);
-	playerArray[catcher][1]++;
+	playerArray[catcher][2]++;
 
 	return Plugin_Handled;	
 }
@@ -77,19 +81,19 @@ public Action Event_PassStolen(Event event, const char[] name, bool dontBroadcas
 	GetClientName(thief, thiefName, sizeof(thiefName));
 	GetClientName(victim, victimName, sizeof(victimName));
 	PrintToChatAll("\x0700ffff[PASS] %s\x07ff8000 stole from\x0700ffff %s!", thiefName, victimName);
-	playerArray[thief][2]++;
+	playerArray[thief][3]++;
 
 	return Plugin_Handled;
 }
 
 public Action Event_TeamWin(Event event, const char[] name, bool dontBroadcast) {
 	if (!statsEnable.BoolValue) return Plugin_Handled;	
-	displayStats();
+	CreateTimer(5.0, Timer_DisplayStats)
 	return Plugin_Handled;
 }
 
 //this is really fucking sloppy but shrug
-public void displayStats() {
+public Action Timer_DisplayStats(Handle timer) {
 	int redTeam[16], bluTeam[16];
 	int redCursor, bluCursor = 0;
 	for (int x=1; x < MaxClients+1; x++) {
@@ -112,13 +116,13 @@ public void displayStats() {
 			for (int i=0; i < bluCursor; i++) {
 				char playerName[NAME_SIZE];
 				GetClientName(bluTeam[i], playerName, sizeof(playerName))
-				PrintToChat(x, "\x0700ffff[PASS]\x074EA6C1 %s:\x073BC43B goals %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[bluTeam[i]][0], playerArray[bluTeam[i]][1], playerArray[bluTeam[i]][2])
+				PrintToChat(x, "\x0700ffff[PASS]\x074EA6C1 %s:\x073BC43B goals %d,\x07ffff00 saves %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[bluTeam[i]][0], playerArray[bluTeam[i]][1], playerArray[bluTeam[i]][2], playerArray[bluTeam[i]][3])
 			}
 
 			for (int i=0; i < redCursor; i++) {
 				char playerName[NAME_SIZE];
 				GetClientName(redTeam[i], playerName, sizeof(playerName))
-				PrintToChat(x, "\x0700ffff[PASS]\x07C43F3B %s:\x073BC43B goals %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[redTeam[i]][0], playerArray[redTeam[i]][1], playerArray[redTeam[i]][2])
+				PrintToChat(x, "\x0700ffff[PASS]\x07C43F3B %s:\x073BC43B goals %d,\x07ffff00 saves %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[redTeam[i]][0], playerArray[redTeam[i]][1], playerArray[redTeam[i]][2], playerArray[redTeam[i]][3])
 			}
 		}
 
@@ -126,13 +130,13 @@ public void displayStats() {
 			for (int i=0; i < redCursor; i++) {
                                  char playerName[NAME_SIZE];
                                  GetClientName(redTeam[i], playerName, sizeof(playerName))
-                                 PrintToChat(x, "\x0700ffff[PASS]\x07C43F3B %s:\x073BC43B goals %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[redTeam[i]][0], playerArray[redTeam[i]][1], playerArray[redTeam[i]][2])
+                                 PrintToChat(x, "\x0700ffff[PASS]\x07C43F3B %s:\x073BC43B goals %d,\x07ffff00 saves %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[redTeam[i]][0], playerArray[redTeam[i]][1], playerArray[redTeam[i]][2], playerArray[redTeam[i]][3])
                          }
 
 			for (int i=0; i < bluCursor; i++) {
 				char playerName[NAME_SIZE];
 				GetClientName(bluTeam[i], playerName, sizeof(playerName))
-				PrintToChat(x, "\x0700ffff[PASS]\x074EA6C1 %s:\x073BC43B goals %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[bluTeam[i]][0], playerArray[bluTeam[i]][1], playerArray[bluTeam[i]][2])
+				PrintToChat(x, "\x0700ffff[PASS]\x074EA6C1 %s:\x073BC43B goals %d,\x07ffff00 saves %d,\x07ff00ff intercepts %d,\x07ff8000 steals %d", playerName, playerArray[bluTeam[i]][0], playerArray[bluTeam[i]][1], playerArray[bluTeam[i]][2], playerArray[bluTeam[i]][3])
 			}
 
 		}
@@ -143,6 +147,26 @@ public void displayStats() {
 		playerArray[i][0] = 0, playerArray[i][1] = 0, playerArray[i][2] = 0;
 	}
 
+}
+
+public bool InGoalieZone(int client) {
+	int team = GetClientTeam(client);
+	float redGoal[3] = {0.0, 1440.0, 230.0};
+	float bluGoal[3] = {0.0, -1440.0, 230.0};
+	float position[3];
+	GetClientAbsOrigin(client, position);
+	
+	if (team == view_as<int>(TFTeam_Blue)) {
+		float distance = GetVectorDistance(position, bluGoal, false);
+		if (distance < 230) return true;
+	}
+
+	if (team == view_as<int>(TFTeam_Red)) {
+		float distance = GetVectorDistance(position, redGoal, false);
+		if (distance < 230) return true;
+	}
+
+	return false;
 }
 
 //i have two of these because i have no friends so i test with robots
