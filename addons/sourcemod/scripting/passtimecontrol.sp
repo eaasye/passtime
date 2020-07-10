@@ -2,9 +2,9 @@
 #include <tf2_stocks>
 
 
-#define PLUGIN_VERSION		"1.1.0"
+#define PLUGIN_VERSION		"1.2.0"
 bool deadPlayers[MAXPLAYERS + 1];
-ConVar stockEnable, clearHud;
+ConVar stockEnable, respawnEnable, clearHud;
 
 public Plugin myinfo = {
 	name = "[TF2] PasstimeControl",
@@ -20,7 +20,8 @@ public void OnPluginStart() {
 	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
 	AddCommandListener(OnChangeClass, "joinclass");
 
-	stockEnable = CreateConVar("sm_passtime_whitelist", "0", "Enables/Disables passtime stock weapon locking and fixed respawn time");
+	stockEnable = CreateConVar("sm_passtime_whitelist", "0", "Enables/Disables passtime stock weapon locking");
+	respawnEnable = CreateConVar("sm_passtime_respawn", "0", "Enables/disables fixed respawn time");
 	clearHud = CreateConVar("sm_passtime_hud", "1", "Enables/Disables blocking the blur effect after intercepting or stealing the ball");
 	CreateConVar("sm_passtimecontrol_version", PLUGIN_VERSION, "*DONT MANUALLY CHANGE* Passtime-Control Plugin Version", FCVAR_NOTIFY | FCVAR_DONTRECORD | FCVAR_SPONLY);
 }
@@ -53,8 +54,7 @@ public Action Event_PlayerResup(Event event, const char[] name, bool dontBroadca
 }
 
 public Action OnChangeClass(int client, const char[] strCommand, int args) {
-    if(deadPlayers[client] == true && stockEnable.BoolValue) {
-	//MAKE SURE TO ADD APOSTROPHE LOL
+    if(deadPlayers[client] == true && respawnEnable.BoolValue) {
         PrintCenterText(client, "You cant change class yet.");
         return Plugin_Handled;
     }
