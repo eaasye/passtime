@@ -2,7 +2,7 @@
 #include <sdktools>
 #include <tf2_stocks>
 
-#define PLUGIN_VERSION		"1.2.0"
+#define PLUGIN_VERSION		"1.3.0"
 #define NAME_SIZE 25
 
 public Plugin myinfo = {
@@ -35,7 +35,7 @@ public void OnPluginStart() {
 }
 
 public void OnClientDisconnect(int client) {
-	playerArray[client][0] = 0, playerArray[client][1] = 0, playerArray[client][2] = 0; 
+	playerArray[client][0] = 0, playerArray[client][1] = 0, playerArray[client][2] = 0, playerArray[client][3] = 0;
 }
 
 
@@ -144,7 +144,7 @@ public Action Timer_DisplayStats(Handle timer) {
 	
 	//clear stats
 	for (int i=0; i < MaxClients+1;i++) {
-		playerArray[i][0] = 0, playerArray[i][1] = 0, playerArray[i][2] = 0;
+		playerArray[i][0] = 0, playerArray[i][1] = 0, playerArray[i][2] = 0, playerArray[i][3] = 0;
 	}
 
 }
