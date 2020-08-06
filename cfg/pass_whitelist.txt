@@ -39,7 +39,6 @@
 // - Secondary
 //  * Chargin' Targe
 //  * Splendid Screen
-//  * Tide Turner
 // - Melee
 //  * Claidheamh Mòr
 //  * Persian Persuader
@@ -78,7 +77,6 @@
 	"The Persian Persuader"						"1"
 	"The Scotsman's Skullcutter"					"1"
 	"The Splendid Screen"						"1"
-	"The Tide Turner"						"1"
 	"The Ullapool Caber"						"1"
 	//____________________________ Medic ____________________________\\
 	"The Amputator"							"1"
@@ -455,6 +453,7 @@
 	"Festive Eyelander"						"0"
 	"Nessie's Nine Iron"						"0"
 	"Stickybomb Jumper"						"0"
+	"The Tide Turner"						"0"
 	"The Eyelander"							"0"
 	"The Horseless Headless Horseman's Headtaker"			"0"
 	"The Loch-n-Load"						"0"
