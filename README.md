@@ -11,6 +11,8 @@ Feel free to use anything in this repository for your own pugs
     
     Disables the blurry screenoverlay after intercepting or stealing via sm_passtime_hud 1/0 (def. 1)
     
+    Turn on hud text, chat text, or sound notifcations when picking up the ball via sm_ballhud
+    
 - passtimestats
 
     Prints chat messages upon a player scoring, intercepting, or stealing
