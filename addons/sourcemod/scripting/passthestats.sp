@@ -2,7 +2,7 @@
 #include <sdktools>
 #include <tf2_stocks>
 
-#define PLUGIN_VERSION		"1.3.0"
+#define PLUGIN_VERSION		"1.4.0"
 #define NAME_SIZE 25
 
 public Plugin myinfo = {
@@ -66,8 +66,10 @@ public Action Event_PassCaught(Event event, const char[] name, bool dontBroadcas
 		PrintToChatAll("\x0700ffff[PASS] %s \x07ffff00 saved \x0700ffff%s!", catcherName, passerName);
 		playerArray[catcher][1]++;
 	}
-	PrintToChatAll("\x0700ffff[PASS] %s \x07ff00ffintercepted \x0700ffff%s!", catcherName, passerName);
-	playerArray[catcher][2]++;
+	else {
+		PrintToChatAll("\x0700ffff[PASS] %s \x07ff00ffintercepted \x0700ffff%s!", catcherName, passerName);
+		playerArray[catcher][2]++;
+	}
 
 	return Plugin_Handled;	
 }
