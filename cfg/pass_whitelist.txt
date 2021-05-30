@@ -1,8 +1,8 @@
-// Whitelist generated at Sun, 23 May 2021 21:21:02 +0200
-// Custom Whitelist ID: 11879
+// Whitelist generated at Sun, 30 May 2021 17:54:53 +0200
+// Custom Whitelist ID: 11904
 
 // Share or view this whitelist:
-//	https://whitelist.tf/11879
+//	https://whitelist.tf/11904
 
 // New items added to the game are: allowed
 // Hats are: allowed
@@ -40,7 +40,6 @@
 //  * Splendid Screen
 // - Melee
 //  * Claidheamh Mòr
-//  * Persian Persuader
 //  * Scotsman's Skullcutter
 //  * Ullapool Caber
 
@@ -57,7 +56,7 @@
 {
 	"unlisted_items_default_to"		"1"
 
-	//------------ Blocked weapons/reskins (Total: 147) -------------\\
+	//------------ Blocked weapons/reskins (Total: 148) -------------\\
 	//______________________ Multiple classes _______________________\\
 	"Panic Attack Shotgun"						"0"
 	"The B.A.S.E. Jumper"						"0"
@@ -133,6 +132,7 @@
 	"The Horseless Headless Horseman's Headtaker"			"0"
 	"The Loch-n-Load"						"0"
 	"The Loose Cannon"						"0"
+	"The Persian Persuader"						"0"
 	"The Quickiebomb Launcher"					"0"
 	"The Scottish Resistance"					"0"
 	"The Tide Turner"						"0"
