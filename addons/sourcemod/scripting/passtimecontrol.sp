@@ -2,13 +2,13 @@
 #include <tf2_stocks>
 
 
-#define PLUGIN_VERSION		"1.3.0"
+#define PLUGIN_VERSION		"1.4.0"
 
 bool deadPlayers[MAXPLAYERS + 1];
 //0 = hud text, 1 = chat, 2 = sound
 bool ballHudEnabled[MAXPLAYERS + 1][3];
 
-ConVar stockEnable, respawnEnable, clearHud;
+ConVar stockEnable, respawnEnable, clearHud, collisionDisable;
 
 Menu ballHudMenu;
 
@@ -29,11 +29,13 @@ public void OnPluginStart() {
 	HookEvent("pass_get", Event_PassGet, EventHookMode_Post);
 	HookEvent("pass_free", Event_PassFree, EventHookMode_Post);
 	HookEvent("pass_ball_stolen", Event_PassStolen, EventHookMode_Post);
+	HookEntityOutput("info_passtime_ball_spawn", "OnSpawnBall", Hook_OnSpawnBall)
 	AddCommandListener(OnChangeClass, "joinclass");
 
 	stockEnable = CreateConVar("sm_passtime_whitelist", "0", "Enables/Disables passtime stock weapon locking");
 	respawnEnable = CreateConVar("sm_passtime_respawn", "0", "Enables/disables fixed respawn time");
 	clearHud = CreateConVar("sm_passtime_hud", "1", "Enables/Disables blocking the blur effect after intercepting or stealing the ball");
+	collisionDisable = CreateConVar("sm_passtime_collision_disable", "0", "Enables/Disables the passtime jack from colliding with ammopacks or weapons");
 	CreateConVar("sm_passtimecontrol_version", PLUGIN_VERSION, "*DONT MANUALLY CHANGE* Passtime-Control Plugin Version", FCVAR_NOTIFY | FCVAR_DONTRECORD | FCVAR_SPONLY);
 	
 	ballHudMenu = new Menu(BallHudMenuHandler);
@@ -147,6 +149,11 @@ public Action OnChangeClass(int client, const char[] strCommand, int args) {
     }
         
     return Plugin_Continue;
+}
+
+public void Hook_OnSpawnBall(const char[] name, int caller, int activator, float delay) {
+	int ball = FindEntityByClassname(-1, "passtime_ball");
+	if(collisionDisable.BoolValue) SetEntityCollisionGroup(ball, 4);
 }
 
 /* ---FUNCTIONS--- */
