@@ -2,7 +2,8 @@
 #include <sdktools>
 #include <tf2_stocks>
 
-#define PLUGIN_VERSION		"1.4.0"
+//adding support for maps other than arena2
+#define PLUGIN_VERSION		"1.5.0"
 #define NAME_SIZE 25
 
 public Plugin myinfo = {
@@ -16,11 +17,13 @@ public Plugin myinfo = {
 
 //playerArray: 0 = scores, saves = 1, 2 = interceptions, 3 = steals
 int playerArray[MAXPLAYERS][4];
-ConVar statsEnable;
+float bluGoal[3], redGoal[3];
+ConVar statsEnable, statsDelay;
 
 
 public void OnPluginStart() {
 	statsEnable = CreateConVar("sm_passtime_stats", "1", "Enables passtime stats")
+	statsDelay = CreateConVar("sm_passtime_stats_delay", "7.5", "Delay for passtime stats to be displayed after a game is won")
 	CreateConVar("sm_passthestats_version", PLUGIN_VERSION, "*DONT MANUALLY CHANGE* PassTheStats Plugin Version", FCVAR_NOTIFY | FCVAR_DONTRECORD | FCVAR_SPONLY);
 	char mapName[64], prefix[16];
         GetCurrentMap(mapName, sizeof(mapName));
@@ -32,6 +35,10 @@ public void OnPluginStart() {
 	HookEvent("pass_score", Event_PassScore, EventHookMode_Post);
 	HookEvent("pass_pass_caught", Event_PassCaught, EventHookMode_Post);
 	HookEvent("pass_ball_stolen", Event_PassStolen, EventHookMode_Post);
+}
+
+public void OnMapStart() {
+	GetGoalLocations();
 }
 
 public void OnClientDisconnect(int client) {
@@ -63,7 +70,7 @@ public Action Event_PassCaught(Event event, const char[] name, bool dontBroadcas
 	GetClientName(passer, passerName, sizeof(passerName));
 	GetClientName(catcher, catcherName, sizeof(catcherName));
 	if (InGoalieZone(catcher)) {
-		PrintToChatAll("\x0700ffff[PASS] %s \x07ffff00 saved \x0700ffff%s!", catcherName, passerName);
+		PrintToChatAll("\x0700ffff[PASS] %s \x07ffff00 blocked \x0700ffff%s!", catcherName, passerName);
 		playerArray[catcher][1]++;
 	}
 	else {
@@ -90,7 +97,7 @@ public Action Event_PassStolen(Event event, const char[] name, bool dontBroadcas
 
 public Action Event_TeamWin(Event event, const char[] name, bool dontBroadcast) {
 	if (!statsEnable.BoolValue) return Plugin_Handled;	
-	CreateTimer(5.0, Timer_DisplayStats)
+	CreateTimer(statsDelay.FloatValue, Timer_DisplayStats)
 	return Plugin_Handled;
 }
 
@@ -153,8 +160,6 @@ public Action Timer_DisplayStats(Handle timer) {
 
 public bool InGoalieZone(int client) {
 	int team = GetClientTeam(client);
-	float redGoal[3] = {0.0, 1440.0, 230.0};
-	float bluGoal[3] = {0.0, -1440.0, 230.0};
 	float position[3];
 	GetClientAbsOrigin(client, position);
 	
@@ -169,6 +174,20 @@ public bool InGoalieZone(int client) {
 	}
 
 	return false;
+}
+
+public void GetGoalLocations() {
+	int goal1 = FindEntityByClassname(-1, "func_passtime_goal");
+	int goal2 = FindEntityByClassname(goal1, "func_passtime_goal");
+	int team1 = GetEntProp(goal1, Prop_Send, "m_iTeamNum");
+	if (team1 == 2) {
+		GetEntPropVector(goal1, Prop_Send, "m_vecOrigin", bluGoal);
+		GetEntPropVector(goal2, Prop_Send, "m_vecOrigin", redGoal);
+	}
+	else {
+		GetEntPropVector(goal2, Prop_Send, "m_vecOrigin", bluGoal);
+		GetEntPropVector(goal1, Prop_Send, "m_vecOrigin", redGoal);
+	}
 }
 
 //i have two of these because i have no friends so i test with robots
