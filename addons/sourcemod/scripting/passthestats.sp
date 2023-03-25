@@ -3,7 +3,7 @@
 #include <tf2_stocks>
 
 //adding support for maps other than arena2
-#define PLUGIN_VERSION		"1.5.0"
+#define PLUGIN_VERSION		"1.6.0"
 #define NAME_SIZE 25
 
 public Plugin myinfo = {
@@ -18,12 +18,13 @@ public Plugin myinfo = {
 //playerArray: 0 = scores, saves = 1, 2 = interceptions, 3 = steals
 int playerArray[MAXPLAYERS][4];
 float bluGoal[3], redGoal[3];
-ConVar statsEnable, statsDelay;
+ConVar statsEnable, statsDelay, saveRadius;
 
 
 public void OnPluginStart() {
 	statsEnable = CreateConVar("sm_passtime_stats", "1", "Enables passtime stats")
 	statsDelay = CreateConVar("sm_passtime_stats_delay", "7.5", "Delay for passtime stats to be displayed after a game is won")
+	saveRadius = CreateConVar("sm_passtime_stats_save_radius", "200", "The Radius in hammer units from the goal that an intercept is considered a save")
 	CreateConVar("sm_passthestats_version", PLUGIN_VERSION, "*DONT MANUALLY CHANGE* PassTheStats Plugin Version", FCVAR_NOTIFY | FCVAR_DONTRECORD | FCVAR_SPONLY);
 	char mapName[64], prefix[16];
         GetCurrentMap(mapName, sizeof(mapName));
@@ -165,12 +166,12 @@ public bool InGoalieZone(int client) {
 	
 	if (team == view_as<int>(TFTeam_Blue)) {
 		float distance = GetVectorDistance(position, bluGoal, false);
-		if (distance < 230) return true;
+		if (distance < saveRadius.FloatValue) return true;
 	}
 
 	if (team == view_as<int>(TFTeam_Red)) {
 		float distance = GetVectorDistance(position, redGoal, false);
-		if (distance < 230) return true;
+		if (distance < saveRadius.FloatValue) return true;
 	}
 
 	return false;
