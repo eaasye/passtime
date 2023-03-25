@@ -35,3 +35,7 @@ Feel free to use anything in this repository for your own pugs
     
 - passtime_whitelist.txt
     The 4v4 competitive passtime whitelist
+
+## other downloads
+pass_stadium, by Exer
+https://tf2maps.net/downloads/pass_stadium.15102/
